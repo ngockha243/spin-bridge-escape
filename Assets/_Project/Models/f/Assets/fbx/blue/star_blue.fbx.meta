@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: f9b0e556652cc284facad2ab07b04057
+guid: 5c03d3b4e3ed1ba4e8c889c5685ad14e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: platformer
+    second: {fileID: 2100000, guid: af1153226a1e3d1469260df4ffd301fb, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
