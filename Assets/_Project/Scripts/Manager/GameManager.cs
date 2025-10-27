@@ -14,8 +14,7 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
-        GameState currentState = GameState.NONE;
-        levelManager.Initialize();
+        SwitchGameState(GameState.NONE);
         gameController.Initialize();
         //dataManager.Initialize();
     }
