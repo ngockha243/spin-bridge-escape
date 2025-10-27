@@ -1,19 +1,26 @@
 ﻿using DG.Tweening;
+using FastFood;
+using System.Collections;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : Singleton<PlayerController>
 {
     private GameController gameCtrl;
     private LevelController levelCtrl;
-    public LayerMask groundLayer, platformLayer;
-    public RaycastCheck foot_1, foot_2;
 
-    public float speedMovement = 5f;
+    public LayerMask groundLayer;
+    public RaycastCheck rayCheckPlatform;
+
+    public AnimationCurve moveCurve;
+    public float speedDuration = 5f;
     public float groundRayDistance = 0.2f;
     public float footOffset;
 
     private Rigidbody rb;
-    private bool isMoving;
+    private bool isMoving, isFalling;
+    private Collider _collider;
+
     public Animator animator;
     public void Initialize(GameController gameCtrl)
     {
@@ -21,50 +28,83 @@ public class PlayerController : Singleton<PlayerController>
         levelCtrl = LevelController.Instance;
         isMoving = false;
         rb = GetComponent<Rigidbody>();
-    }
-    public void UpdatePhysic()
-    {
-        if (Input.GetKey(KeyCode.Space))
+        rb.isKinematic = true;
+        if (moveCurve == null)
         {
-            AcceptMoving();
+            moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        }
+        _collider = GetComponent<Collider>();
+        _collider.enabled = true;
+        transform.position = gameCtrl.startGround.CenterPos;
+    }
+    public void UpdateLogic()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TryCrossBridge();
 
         }
-        if (isMoving)
+    }
+    public void UpdateLate()
+    {
+        if (!isFalling)
         {
-            Moving();
+            CameraController.Instance.FollowTo(transform.position);
+        }
+
+    }
+    void TryCrossBridge()
+    {
+        if (IsOnPlatform())
+        {
+            Debug.Log("On Platform");
+            StartCoroutine(Moving());
+        }
+        else
+        {
+            Debug.Log("Not On Platform - Fall Straight Down");
+            StartCoroutine(FallStraightDown());
         }
     }
-    private void AcceptMoving()
+    IEnumerator FallStraightDown()
+    {
+        isMoving = false;
+        isFalling = true;
+        _collider.enabled = false;
+        rb.isKinematic = false;
+        Vector3 jumpDirection = (transform.forward * 2) + (Vector3.up * 3);
+        rb.AddForce(jumpDirection, ForceMode.VelocityChange);
+        Debug.Log("Falling Down!");
+        yield return new WaitForSeconds(1f);
+    }
+    private IEnumerator Moving()
     {
         isMoving = true;
-        gameCtrl.startGround.NextPlatform.SetStop(true);
-    }
-    private void Moving()
-    {
+        gameCtrl.SetCurrentPlatform(PlatformDetected);
+        gameCtrl.CurrentPlatform.SetStop(true);
 
-        rb.AddForce(Vector3.forward * speedMovement);
         animator.Play("run");
-        if (!IsOnPlatform())
+        Vector3 startPos = gameCtrl.startGround.CenterPos;
+        Vector3 endPos = gameCtrl.endGround.CenterPos;
+        float t = 0f;
+
+        while (t < 1f)
         {
-            if (IsOnGround() && currentGround == gameCtrl.endGround)
-            {
-                gameCtrl.SetStartGround(currentGround);
-                var v = currentGround.CenterPos;
-                rb.velocity = Vector3.zero;
-                rb.MovePosition(v);
-                isMoving = false;
-                animator.Play("idle");
-                Debug.Log("You Win!");
-                return;
-            }
-            isMoving = false;
-            Debug.Log("You Lose!");
+            t += Time.deltaTime / speedDuration;
+            float curveT = moveCurve.Evaluate(t);
+            transform.position = Vector3.Lerp(startPos, endPos, curveT);
+            yield return null;
         }
+
+        isMoving = false;
+        animator.Play("idle");
+        gameCtrl.SetStartGround(gameCtrl.endGround);
     }
     GroundController currentGround;
+    BasePlatform PlatformDetected;
     public bool IsOnPlatform()
     {
-        return (foot_1.IsOnPlatform() || foot_2.IsOnPlatform());
+        return (rayCheckPlatform.IsOnPlatform(ref PlatformDetected));
     }
     public bool IsOnGround()
     {

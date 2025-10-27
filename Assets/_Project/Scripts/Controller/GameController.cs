@@ -10,14 +10,23 @@ public class GameController : Singleton<GameController>
     private LevelController levelCtrl => LevelController.Instance;
     public GroundController startGround;
     public GroundController endGround;
+    public BasePlatform CurrentPlatform { private set; get; }
+    public void SetCurrentPlatform(BasePlatform plf)
+    {
+        CurrentPlatform = plf;
+    }
     private void Start()
     {
-        playerCtrl.Initialize(this);
         SetStartGround(levelCtrl.Grounds[0]);
+        playerCtrl.Initialize(this);
     }
-    private void FixedUpdate()
+    public void UpdateLogic()
     {
-        playerCtrl.UpdatePhysic();
+        playerCtrl.UpdateLogic();
+    }
+    public void UpdateLate()
+    {
+        playerCtrl.UpdateLate();
     }
     public void OnLoseGame()
     {
@@ -30,6 +39,7 @@ public class GameController : Singleton<GameController>
 
     public void SetStartGround(GroundController ground)
     {
+        Debug.Log("Set Start Ground: " + ground.name);
         startGround = ground;
         var grounds = levelCtrl.Grounds;    
         int index = Array.IndexOf(grounds, ground);

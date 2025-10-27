@@ -6,6 +6,11 @@ namespace FastFood
     public class CameraController : Singleton<CameraController>
     {
         public Camera mainCamera;
+        public Vector3 offset;
+        public void FollowTo(Vector3 target)
+        {
+            mainCamera.transform.position = Vector3.ClampMagnitude(new Vector3(target.x + offset.x, target.y + offset.y, target.z + offset.z), 1000f);
+        }
         public void ResizeCameraLR(SpriteRenderer target)
         {
             float max = target.bounds.max.x;
