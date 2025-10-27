@@ -9,7 +9,7 @@ namespace FastFood
         public Vector3 offset;
         public void FollowTo(Vector3 target)
         {
-            mainCamera.transform.position = Vector3.ClampMagnitude(new Vector3(target.x + offset.x, target.y + offset.y, target.z + offset.z), 1000f);
+            mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, new Vector3(target.x + offset.x, target.y + offset.y, target.z + offset.z), 2f);
         }
         public void ResizeCameraLR(SpriteRenderer target)
         {

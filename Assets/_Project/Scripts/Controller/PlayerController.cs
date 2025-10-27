@@ -2,7 +2,6 @@
 using FastFood;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : Singleton<PlayerController>
 {
@@ -19,9 +18,9 @@ public class PlayerController : Singleton<PlayerController>
 
     private Rigidbody rb;
     private bool isMoving, isFalling;
-    private Collider _collider;
 
     public Animator animator;
+    public SpriteRenderer shadow;
     public void Initialize(GameController gameCtrl)
     {
         this.gameCtrl = gameCtrl;
@@ -33,9 +32,10 @@ public class PlayerController : Singleton<PlayerController>
         {
             moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         }
-        _collider = GetComponent<Collider>();
-        _collider.enabled = true;
         transform.position = gameCtrl.startGround.CenterPos;
+        animator.Play($"idle{Random.Range(1, 4)}");
+        shadow.DOFade(0.2f, 0.2f);
+        transform.rotation = Quaternion.Euler(Vector3.zero);
     }
     public void UpdateLogic()
     {
@@ -70,11 +70,13 @@ public class PlayerController : Singleton<PlayerController>
     {
         isMoving = false;
         isFalling = true;
-        _collider.enabled = false;
         rb.isKinematic = false;
+        animator.Play("jump");
+        shadow.DOFade(0, 0.2f);
         Vector3 jumpDirection = (transform.forward * 2) + (Vector3.up * 3);
         rb.AddForce(jumpDirection, ForceMode.VelocityChange);
-        Debug.Log("Falling Down!");
+        levelCtrl.OnLose();
+        GameManager.Instance.SwitchGameState(GameState.LOSE);
         yield return new WaitForSeconds(1f);
     }
     private IEnumerator Moving()
@@ -97,7 +99,7 @@ public class PlayerController : Singleton<PlayerController>
         }
 
         isMoving = false;
-        animator.Play("idle");
+        animator.Play($"idle{Random.Range(1, 4)}");
         gameCtrl.SetStartGround(gameCtrl.endGround);
     }
     GroundController currentGround;
@@ -122,5 +124,16 @@ public class PlayerController : Singleton<PlayerController>
         Color color = raycast ? Color.red : Color.green;
         Debug.DrawRay(position, Vector3.down * distance, color);
         return raycast;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("WinGate"))
+        {
+            StopAllCoroutines();
+            GameManager.Instance.SwitchGameState(GameState.WIN);
+            animator.Play($"Dance_{Random.Range(1, 5)}");
+            transform.DORotate(new Vector3(0, 180, 0), 0.5f);
+
+        }
     }
 }

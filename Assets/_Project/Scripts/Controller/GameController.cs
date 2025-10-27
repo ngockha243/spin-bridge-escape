@@ -15,13 +15,17 @@ public class GameController : Singleton<GameController>
     {
         CurrentPlatform = plf;
     }
-    private void Start()
+    public void Initialize()
     {
+        levelCtrl.Initialize();
         SetStartGround(levelCtrl.Grounds[0]);
         playerCtrl.Initialize(this);
+
     }
     public void UpdateLogic()
     {
+        if (GameManager.currentState != GameState.PLAY) return;
+        levelCtrl.UpdateLogic();
         playerCtrl.UpdateLogic();
     }
     public void UpdateLate()

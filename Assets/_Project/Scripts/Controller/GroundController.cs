@@ -1,14 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(Rigidbody))]
 public class GroundController : MonoBehaviour
 {
+    public bool isStartGround;
     [SerializeField] Transform centerPos;
     public Vector3 CenterPos => centerPos.position;
     public bool isPlayerHere { private set; get; }
-    public void SetPlayerHere(bool status)
+    Rigidbody rb;
+    public void Initialize()
     {
-        isPlayerHere = status;
+        rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+    }
+    public void OnLose()
+    {
+        if (isStartGround) return;
+        rb.isKinematic = false;
+        rb.AddForce(Vector3.up * UnityEngine.Random.Range(1f, 6f), ForceMode.VelocityChange);
     }
 }

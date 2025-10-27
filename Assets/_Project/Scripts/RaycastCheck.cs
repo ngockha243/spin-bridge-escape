@@ -14,7 +14,7 @@ public class RaycastCheck : MonoBehaviour
     }
     public bool IsOnPlatform(ref BasePlatform platformDetected)
     {
-        return RayCast(transform.position + new Vector3(0, 0, footOffset), Vector2.down, distance, platformLayer, ref platformDetected);
+        return RayCast(transform.position + new Vector3(0, 0.2f, footOffset), Vector2.down, distance, platformLayer, ref platformDetected);
     }
 
     private bool RayCast(Vector3 position, Vector3 direction, float distance, LayerMask layerMask, ref BasePlatform platformDetected)
