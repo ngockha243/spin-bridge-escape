@@ -32,12 +32,20 @@ public class PopupSettingMain : PopupUI
         closeBtn.onClick.AddListener(() =>
         {
             AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+            if (GameManager.currentState != GameState.NONE)
+            {
+                GameManager.Instance.SwitchGameState(GameState.PLAY);
+            }
             Hide();
         });
     }
-    public override void Show(Action onClose, bool isShowTopUI)
+    public override void Show(Action onClose)
     {
-        base.Show(onClose, true);
+        base.Show(onClose);
+        if(GameManager.currentState != GameState.NONE)
+        {
+            GameManager.Instance.SwitchGameState(GameState.PAUSE);
+        }
         OnInitSetting();
     }
     private void OnClickVibration()

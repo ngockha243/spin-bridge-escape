@@ -183,19 +183,19 @@ public class UIManager : Singleton<UIManager>//, IAdsUI
         }
         return default;
     }
-    public T ShowPopup<T>(System.Action onClose, bool showTopUI = false) where T : PopupUI
+    public T ShowPopup<T>(System.Action onClose) where T : PopupUI
     {
         for (int i = 0; i < listPopupCached.Count; i++)
         {
             if (listPopupCached[i] is T)
             {
-                listPopupCached[i].Show(onClose, showTopUI);
+                listPopupCached[i].Show(onClose);
                 listPopupCached[i].transform.SetAsLastSibling();
                 return listPopupCached[i].GetComponent<T>();
             }
         }
         T popup = CreatePopup<T>();
-        popup.Show(onClose, showTopUI);
+        popup.Show(onClose);
         popup.transform.SetAsLastSibling();
         return popup;
     }

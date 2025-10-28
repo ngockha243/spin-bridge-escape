@@ -7,37 +7,28 @@ namespace FastFood
     {
         public Camera mainCamera;
         public Vector3 offset;
+        public Transform startPos;
+
+        public void Back2StartPos()
+        {
+            MoveTo(startPos.position, 0.5f, 0, Ease.InOutSine);
+            RotateTo(startPos.eulerAngles, 0.5f, 0, Ease.InOutSine);
+        }
         public void FollowTo(Vector3 target)
         {
-            mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, new Vector3(target.x + offset.x, target.y + offset.y, target.z + offset.z), 2f);
-        }
-        public void ResizeCameraLR(SpriteRenderer target)
-        {
-            float max = target.bounds.max.x;
-            Vector3 v = mainCamera.WorldToViewportPoint(new Vector3(max, target.transform.position.y, target.transform.position.z));
-            if (v.x != 0)
-            {
-                float distanceToLeftEdge = mainCamera.transform.position.x - max;
-                mainCamera.orthographicSize = Mathf.Abs(distanceToLeftEdge / mainCamera.aspect);
-            }
-        }
-        public void ResizeCameraTB(SpriteRenderer target)
-        {
-            float max = target.bounds.max.y;
-            Vector3 v = mainCamera.WorldToViewportPoint(new Vector3(target.transform.position.x, max, target.transform.position.z));
-            if (v.x != 1)
-            {
-                float distanceToTopEdge = max - mainCamera.transform.position.y;
-                mainCamera.orthographicSize = Mathf.Abs(distanceToTopEdge);
-            }
-        }
-        public void SetCamSize(float size)
-        {
-            mainCamera.orthographicSize = size;
+            var v = new Vector3(target.x + offset.x, target.y + offset.y, target.z + offset.z);
+            MoveTo(v, 0.5f, 0, Ease.InOutSine);
         }
         public void MoveTo(Vector3 newPos, float duration, float delay, Ease ease, Action onComplete = null)
         {
             mainCamera.transform.DOMove(newPos, duration).SetDelay(delay).SetEase(ease).OnComplete(() =>
+            {
+                onComplete?.Invoke();
+            });
+        }
+        public void RotateTo(Vector3 newRot, float duration, float delay, Ease ease, Action onComplete = null)
+        {
+            mainCamera.transform.DORotate(newRot, duration).SetDelay(delay).SetEase(ease).OnComplete(() =>
             {
                 onComplete?.Invoke();
             });

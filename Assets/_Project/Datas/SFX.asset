@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ee1653aa14ad4445bef39e904b29ffd, type: 3}
   m_Name: SFX
   m_EditorClassIdentifier: 
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 41e3b08ff70b6074cbc96ea6d553f656, type: 3}
+  - {fileID: 8300000, guid: 332d6c57e41e1e54f90019e4b38ef24c, type: 3}
+  - {fileID: 8300000, guid: bc4c6420973b19544af0ff9875a28631, type: 3}

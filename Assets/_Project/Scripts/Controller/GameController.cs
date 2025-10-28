@@ -28,14 +28,6 @@ public class GameController : Singleton<GameController>
         levelCtrl.UpdateLogic();
         playerCtrl.UpdateLogic();
     }
-    public void UpdateLate()
-    {
-        playerCtrl.UpdateLate();
-    }
-    public void OnLoseGame()
-    {
-        Debug.Log("You Lose!");
-    }
     public void OnWinGame()
     {
 
@@ -43,7 +35,6 @@ public class GameController : Singleton<GameController>
 
     public void SetStartGround(GroundController ground)
     {
-        Debug.Log("Set Start Ground: " + ground.name);
         startGround = ground;
         var grounds = levelCtrl.Grounds;    
         int index = Array.IndexOf(grounds, ground);

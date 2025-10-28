@@ -13,6 +13,14 @@ public class LevelController : Singleton<LevelController>
         grounds = GetComponentsInChildren<GroundController>();
         platforms = GetComponentsInChildren<BasePlatform>();
     }
+    public bool IsAllPerfect()
+    {
+        foreach (var platform in platforms)
+        {
+            if (!platform.PERFECT) return false;
+        }
+        return true;
+    }
     public void Initialize()
     {
         foreach (var ground in grounds)

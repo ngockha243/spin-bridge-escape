@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using FastFood;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -21,9 +22,13 @@ public class PlayerController : Singleton<PlayerController>
 
     public Animator animator;
     public SpriteRenderer shadow;
+    public ParticleSystem perfectFX, warningFX;
+    public SkinController skinCtrl;
+
     public void Initialize(GameController gameCtrl)
     {
         this.gameCtrl = gameCtrl;
+        skinCtrl.Initialize();
         levelCtrl = LevelController.Instance;
         isMoving = false;
         rb = GetComponent<Rigidbody>();
@@ -33,36 +38,31 @@ public class PlayerController : Singleton<PlayerController>
             moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         }
         transform.position = gameCtrl.startGround.CenterPos;
-        animator.Play($"idle{Random.Range(1, 4)}");
+        animator.Play($"idle{UnityEngine.Random.Range(1, 4)}");
         shadow.DOFade(0.2f, 0.2f);
         transform.rotation = Quaternion.Euler(Vector3.zero);
+        SetRotate(Vector3.up * 180f);
+    }
+    public void SetRotate(Vector3 value, float duration = 0.5f, Action onComplete = null)
+    {
+        transform.DORotate(value, duration).OnComplete(() => onComplete?.Invoke());
     }
     public void UpdateLogic()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (isMoving || isFalling) return;
+        if (Input.GetMouseButtonDown(0))
         {
             TryCrossBridge();
-
         }
-    }
-    public void UpdateLate()
-    {
-        if (!isFalling)
-        {
-            CameraController.Instance.FollowTo(transform.position);
-        }
-
     }
     void TryCrossBridge()
     {
         if (IsOnPlatform())
         {
-            Debug.Log("On Platform");
             StartCoroutine(Moving());
         }
         else
         {
-            Debug.Log("Not On Platform - Fall Straight Down");
             StartCoroutine(FallStraightDown());
         }
     }
@@ -77,12 +77,21 @@ public class PlayerController : Singleton<PlayerController>
         rb.AddForce(jumpDirection, ForceMode.VelocityChange);
         levelCtrl.OnLose();
         GameManager.Instance.SwitchGameState(GameState.LOSE);
+        warningFX.Play();
+        warningFX.transform.position = transform.position + Vector3.up * 1.58f;
         yield return new WaitForSeconds(1f);
+        UIManager.Instance.ShowPopup<PopupLose>(null);
+        AudioManager.Instance.PlayOneShot(SFXStr.LOSE_VOICE, 1);
     }
     private IEnumerator Moving()
     {
         isMoving = true;
         gameCtrl.SetCurrentPlatform(PlatformDetected);
+        if (PlatformDetected.PERFECT)
+        {
+            perfectFX.Play();
+            perfectFX.transform.position = transform.position + Vector3.up * 1.58f;
+        }
         gameCtrl.CurrentPlatform.SetStop(true);
 
         animator.Play("run");
@@ -95,11 +104,12 @@ public class PlayerController : Singleton<PlayerController>
             t += Time.deltaTime / speedDuration;
             float curveT = moveCurve.Evaluate(t);
             transform.position = Vector3.Lerp(startPos, endPos, curveT);
+            CameraController.Instance.FollowTo(transform.position);
             yield return null;
         }
 
         isMoving = false;
-        animator.Play($"idle{Random.Range(1, 4)}");
+        animator.Play($"idle{UnityEngine.Random.Range(1, 4)}");
         gameCtrl.SetStartGround(gameCtrl.endGround);
     }
     GroundController currentGround;
@@ -130,9 +140,12 @@ public class PlayerController : Singleton<PlayerController>
         if (other.CompareTag("WinGate"))
         {
             StopAllCoroutines();
+            UIManager.Instance.GetScreen<InGameUI>().PlayFirework();
+            AudioManager.Instance.PlayOneShot(SFXStr.FIREWORK, 1);
             GameManager.Instance.SwitchGameState(GameState.WIN);
-            animator.Play($"Dance_{Random.Range(1, 5)}");
-            transform.DORotate(new Vector3(0, 180, 0), 0.5f);
+            animator.Play($"Dance_{UnityEngine.Random.Range(1, 5)}");
+            SetRotate(Vector3.up * 180f);
+            UIManager.Instance.ShowPopup<PopupWin>(null);
 
         }
     }

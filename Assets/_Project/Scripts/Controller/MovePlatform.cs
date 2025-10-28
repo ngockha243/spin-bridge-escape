@@ -32,7 +32,6 @@ public class MovePlatform : BasePlatform
         if (d >= -0.05f && d <= 0.05f)
         {
             PERFECT = true;
-            Debug.Log("PERFECT on Move Platform");
         }
         else
         {

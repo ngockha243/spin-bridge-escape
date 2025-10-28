@@ -14,28 +14,19 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
+        Application.targetFrameRate = 60;
         SwitchGameState(GameState.NONE);
-        gameController.Initialize();
-        //dataManager.Initialize();
     }
     private void Start()
     {
+        AudioManager.Instance.PlayMusic("BGM", 1, true);
+        levelManager.Initialize();
+        gameController.Initialize();
         uiManager.Initialize(this);
-        //if (Scene.isFirstLoad)
-        //{
-        //    AudioManager.Instance.PlayMusic("background music 2", 1, true);
-        //    uiManager.ActiveScreen<MainMenuUI>(true, true, true);
-        //    gameController.SetActive(false);
-        //    SwitchGameState(GameState.NONE);
-        //}
-        //else
-        {
-            AudioManager.Instance.PlayMusic("background music 1", 1, true);
-            //gameController.Initialize();
-            //gameController.SetActive(true);
-            //uiManager.ActiveScreen<InGameUI>();
-            SwitchGameState(GameState.PLAY);
-        }
+    }
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(0);
     }
     private void Update()
     {
@@ -44,21 +35,18 @@ public class GameManager : Singleton<GameManager>
             gameController.UpdateLogic();
         }
     }
-    private void LateUpdate()
-    {
-        if (currentState == GameState.PLAY)
-        {
-            gameController.UpdateLate();
-        }
-    }
     public void SwitchGameState(GameState newState)
     {
+#if UNITY_EDITOR
         Debug.Log($"<color=#9CDCE1>=> STATUS _ GAME-STATE: {newState}</color>");
+#endif
         currentState = newState;
     }
     public void SwitchGameMode(GameMode newMode)
     {
+#if UNITY_EDITOR
         Debug.Log($"<color=#9CDCE1>=> STATUS _ GAME-MODE: {newMode}</color>");
+#endif
         currentMode = newMode;
     }
 

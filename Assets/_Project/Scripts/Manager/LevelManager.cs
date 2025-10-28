@@ -7,10 +7,15 @@ public class LevelManager : Singleton<LevelManager>
         set { PlayerPrefs.SetInt("LEVEL", value); }
         get { return PlayerPrefs.GetInt("LEVEL", 1); }
     }
-    public static int Score
+    public static int Coin
     {
-        set { PlayerPrefs.SetInt("SCORE", value); }
-        get { return PlayerPrefs.GetInt("SCORE", 0); }
+        set { PlayerPrefs.SetInt("COIN", value); }
+        get { return PlayerPrefs.GetInt("COIN", 0); }
+    }
+    public static int Tutorial
+    {
+        set { PlayerPrefs.SetInt("TUTORIAL", value); }
+        get { return PlayerPrefs.GetInt("TUTORIAL", 0); }
     }
     [SerializeField] LevelController[] levels;
     int counter = 0;

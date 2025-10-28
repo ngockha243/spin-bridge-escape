@@ -11,9 +11,6 @@ public abstract class PopupUI : MonoBehaviour
     public static event Action<PopupUI> OnShow;
     public bool isCache = true;
     public bool isShowing;
-    //private GameState preState;
-    private bool isShowTopUI;
-    //protected TopUI topUI;
     public virtual void Initialize(UIManager manager)
     {
         this.uiManager = manager;
@@ -23,26 +20,9 @@ public abstract class PopupUI : MonoBehaviour
         isShowing = false;
     }
 
-    public virtual void Show(Action onClose, bool isShowTopUI)
+    public virtual void Show(Action onClose)
     {
         animator.Play("OnShow");
-        //preState = GameManager.currentState;
-        //GameManager.Instance.SwitchGameState(GameState.PAUSE);
-
-        this.isShowTopUI = isShowTopUI;
-        //if (!topUI.isLock)
-        //{
-        //    if (isShowTopUI)
-        //    {
-        //        RectTransform rect = transform.Find("BG").GetComponent<RectTransform>();
-        //        topUI.SetParent(rect);
-        //        topUI.SetActive(true);
-        //    }
-        //    else
-        //    {
-        //        topUI.SetActive(false, true);
-        //    }
-        //}
         this.onClose = onClose;
         isShowing = true;
         gameObject.SetActive(true);
