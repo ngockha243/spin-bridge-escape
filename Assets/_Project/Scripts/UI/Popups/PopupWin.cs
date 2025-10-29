@@ -19,6 +19,7 @@ public class PopupWin : PopupUI
         {
             AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
             LevelManager.Coin += coin;
+            LevelManager.Level++;
             GameManager.NEW_LEVEL = false;
             SceneManager.LoadScene(0);
         });
