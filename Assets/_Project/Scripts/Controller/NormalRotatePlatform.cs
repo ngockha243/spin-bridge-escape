@@ -3,11 +3,13 @@ using UnityEngine;
 public class NormalRotatePlatform : BasePlatform
 {
     [SerializeField] float speedRotate = 5f;
+    [SerializeField] bool isFreeze = false;
     private float currentRotateValue;
+
     public override void UpdateLogic()
     {
         base.UpdateLogic();
-        if (isStop) return;
+        if (isStop || isFreeze) return;
         currentRotateValue += speedRotate * Time.deltaTime;
         model.transform.rotation = Quaternion.Euler(new Vector3(0f, currentRotateValue, 0f));
         var y = model.transform.rotation.eulerAngles.y;

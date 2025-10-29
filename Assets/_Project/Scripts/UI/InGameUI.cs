@@ -9,7 +9,7 @@ public class InGameUI : ScreenUI
     [SerializeField] Button settingBtn, playBtn, leftNavBtn, rightNavBtn, buyBtn, tutorialBtn;
     [SerializeField] TextMeshProUGUI levelTxt, skinCostTxt, currentCoinTxt;
     [SerializeField] ParticleSystem fireworkFX;
-    [SerializeField] GameObject coinObj;
+    [SerializeField] GameObject coinObj, tutorialObj;
     public GameObject[] AllButtons => new GameObject[] { playBtn.gameObject, leftNavBtn.gameObject, rightNavBtn.gameObject, buyBtn.gameObject, tutorialBtn.gameObject, settingBtn.gameObject };
     public override void Initialize(UIManager uiManager)
     {
@@ -20,7 +20,7 @@ public class InGameUI : ScreenUI
         if (GameManager.NEW_LEVEL)
         {
             CameraController.Instance.Back2StartPos();
-            PlayerController.Instance.SetRotate(Vector3.zero, 1f, () => GameManager.Instance.SwitchGameState(GameState.PLAY));
+            PlayerController.Instance.SetRotate(Vector3.up * GameController.Instance.startGround.GetDirectionInt(), 1f, () => GameManager.Instance.SwitchGameState(GameState.PLAY));
         }
         playBtn.onClick.AddListener(OnPlay);
         HandleSkin();
@@ -32,6 +32,7 @@ public class InGameUI : ScreenUI
         });
 
         levelTxt.text = $"LEVEL {LevelManager.Level}";
+        tutorialObj.SetActive(false);
     }
     private void HandleSkin()
     {
@@ -102,17 +103,35 @@ public class InGameUI : ScreenUI
         if (LevelManager.Tutorial == 0)
         {
             uiManager.ShowPopup<PopupTutorial>(action);
-            LevelManager.Tutorial++;
+            //LevelManager.Tutorial++;
             return;
         }
         action();
         void action()
         {
             CameraController.Instance.Back2StartPos();
-            PlayerController.Instance.SetRotate(Vector3.zero, 1f, () => GameManager.Instance.SwitchGameState(GameState.PLAY));
+            PlayerController.Instance.SetRotate(Vector3.up * GameController.Instance.startGround.GetDirectionInt(), 1f, () =>
+            {
+                if (LevelManager.Tutorial == 0)
+                {
+                    HandleTutorial(true);
+                }
+                GameManager.Instance.SwitchGameState(GameState.PLAY);
+            });
         }
     }
-
+    public void HandleTutorial(bool isActive)
+    {
+        if (isActive)
+        {
+            tutorialObj.SetActive(true);
+            LevelManager.Tutorial++;
+        }
+        else
+        {
+            tutorialObj.SetActive(false);
+        }
+    }
     private void OnSetting()
     {
         AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);

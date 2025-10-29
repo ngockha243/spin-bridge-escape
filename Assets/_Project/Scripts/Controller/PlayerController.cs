@@ -42,7 +42,7 @@ public class PlayerController : Singleton<PlayerController>
         transform.position = gameCtrl.startGround.CenterPos;
         animator.Play($"idle{UnityEngine.Random.Range(1, 4)}");
         shadow.DOFade(0.2f, 0.2f);
-        transform.rotation = Quaternion.Euler(Vector3.zero);
+        SetRotate(Vector3.up * gameCtrl.startGround.GetDirectionInt());
         if (GameManager.NEW_LEVEL) return;
         SetRotate(Vector3.up * 180f);
     }
@@ -93,6 +93,10 @@ public class PlayerController : Singleton<PlayerController>
         isMoving = true;
         stepLength = AudioManager.Instance.GetSFXLength(SFXStr.STEP);
         gameCtrl.SetCurrentPlatform(PlatformDetected);
+        if (LevelManager.Tutorial == 1)
+        {
+            UIManager.Instance.GetScreen<InGameUI>().HandleTutorial(false);
+        }
         if (PlatformDetected.PERFECT)
         {
             perfectFX.Play();
@@ -108,8 +112,8 @@ public class PlayerController : Singleton<PlayerController>
         while (t < 1f)
         {
             t += Time.deltaTime / speedDuration;
-            stepTimer-= Time.deltaTime;
-            if(stepTimer <= 0f)
+            stepTimer -= Time.deltaTime;
+            if (stepTimer <= 0f)
             {
                 AudioManager.Instance.PlayOneShot(SFXStr.STEP, 2);
                 stepTimer = stepLength;
@@ -121,6 +125,7 @@ public class PlayerController : Singleton<PlayerController>
         }
 
         isMoving = false;
+        SetRotate(Vector3.up * gameCtrl.endGround.GetDirectionInt());
         animator.Play($"idle{UnityEngine.Random.Range(1, 4)}");
         gameCtrl.SetStartGround(gameCtrl.endGround);
     }
