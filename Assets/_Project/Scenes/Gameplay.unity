@@ -12490,7 +12490,6 @@ MonoBehaviour:
   rightNavBtn: {fileID: 178723334}
   buyBtn: {fileID: 850663168}
   tutorialBtn: {fileID: 226443895}
-  homeBtn: {fileID: 0}
   levelTxt: {fileID: 1534671095}
   skinCostTxt: {fileID: 1183397980}
   currentCoinTxt: {fileID: 135460931}

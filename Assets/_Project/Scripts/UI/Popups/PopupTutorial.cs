@@ -35,7 +35,9 @@ public class PopupTutorial : PopupUI
 
     private void OnClickNext()
     {
-        if(currentIndex < tutorials.Length - 1)
+        AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
+        if (currentIndex < tutorials.Length - 1)
         {
             currentIndex++;
             SetTutorial(tutorials[currentIndex]);

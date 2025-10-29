@@ -42,6 +42,8 @@ public class PopupSettingMain : PopupUI
         });
         homeBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
             GameManager.NEW_LEVEL = false;
             SceneManager.LoadScene(0);
         });
@@ -52,8 +54,13 @@ public class PopupSettingMain : PopupUI
         if(GameManager.currentState != GameState.NONE)
         {
             GameManager.Instance.SwitchGameState(GameState.PAUSE);
+            homeBtn.gameObject.SetActive(true);
         }
-        OnInitSetting();
+        else
+        {
+            homeBtn.gameObject.SetActive(false);
+        }
+            OnInitSetting();
     }
     private void OnClickVibration()
     {

@@ -26,6 +26,8 @@ public class InGameUI : ScreenUI
         HandleSkin();
         tutorialBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
             uiManager.ShowPopup<PopupTutorial>(null);
         });
 
@@ -39,6 +41,8 @@ public class InGameUI : ScreenUI
         buyBtn.gameObject.SetActive(false);
         leftNavBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
             s.Left(ref cost, ref owned);
             skinCostTxt.text = cost.ToString();
             skinCostTxt.text = cost.ToString();
@@ -53,6 +57,8 @@ public class InGameUI : ScreenUI
         });
         rightNavBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
             s.Right(ref cost, ref owned);
             skinCostTxt.text = cost.ToString();
             if (s.currentSkin.Owned > 0)
@@ -67,6 +73,8 @@ public class InGameUI : ScreenUI
 
         buyBtn.onClick.AddListener(() =>
         {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
             bool isOkay = false;
             s.Buy(ref isOkay);
             if (!isOkay)
@@ -88,6 +96,8 @@ public class InGameUI : ScreenUI
     private void OnPlay()
     {
         ActiveBtn(false);
+        AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+
         PlayerController.Instance.skinCtrl.LoadSkin();
         if (LevelManager.Tutorial == 0)
         {
@@ -105,6 +115,7 @@ public class InGameUI : ScreenUI
 
     private void OnSetting()
     {
+        AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
         uiManager.ShowPopup<PopupSettingMain>(null);
     }
     public void PlayFirework()

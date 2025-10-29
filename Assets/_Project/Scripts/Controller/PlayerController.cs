@@ -85,11 +85,13 @@ public class PlayerController : Singleton<PlayerController>
         warningFX.transform.position = transform.position + Vector3.up * 1.58f;
         yield return new WaitForSeconds(1f);
         UIManager.Instance.ShowPopup<PopupLose>(null);
-        AudioManager.Instance.PlayOneShot(SFXStr.LOSE_VOICE, 1);
+        AudioManager.Instance.PlayOneShot(SFXStr.LOSE_VOICE, 2);
     }
+    float stepLength;
     private IEnumerator Moving()
     {
         isMoving = true;
+        stepLength = AudioManager.Instance.GetSFXLength(SFXStr.STEP);
         gameCtrl.SetCurrentPlatform(PlatformDetected);
         if (PlatformDetected.PERFECT)
         {
@@ -97,15 +99,21 @@ public class PlayerController : Singleton<PlayerController>
             perfectFX.transform.position = transform.position + Vector3.up * 1.58f;
         }
         gameCtrl.CurrentPlatform.SetStop(true);
-
+        AudioManager.Instance.PlayOneShot(SFXStr.CLACK, 2);
         animator.Play("run");
         Vector3 startPos = gameCtrl.startGround.CenterPos;
         Vector3 endPos = gameCtrl.endGround.CenterPos;
         float t = 0f;
-
+        float stepTimer = 0f;
         while (t < 1f)
         {
             t += Time.deltaTime / speedDuration;
+            stepTimer-= Time.deltaTime;
+            if(stepTimer <= 0f)
+            {
+                AudioManager.Instance.PlayOneShot(SFXStr.STEP, 2);
+                stepTimer = stepLength;
+            }
             float curveT = moveCurve.Evaluate(t);
             transform.position = Vector3.Lerp(startPos, endPos, curveT);
             CameraController.Instance.FollowTo(transform.position);
@@ -145,7 +153,7 @@ public class PlayerController : Singleton<PlayerController>
         {
             StopAllCoroutines();
             UIManager.Instance.GetScreen<InGameUI>().PlayFirework();
-            AudioManager.Instance.PlayOneShot(SFXStr.FIREWORK, 1);
+            AudioManager.Instance.PlayOneShot(SFXStr.FIREWORK, 2);
             GameManager.Instance.SwitchGameState(GameState.WIN);
             animator.Play($"Dance_{UnityEngine.Random.Range(1, 5)}");
             SetRotate(Vector3.up * 180f);

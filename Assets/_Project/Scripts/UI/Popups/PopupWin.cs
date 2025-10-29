@@ -1,11 +1,12 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PopupWin : PopupUI
 {
-    [SerializeField] private Button nextLvBtn, replayBtn;
+    [SerializeField] private Button nextLvBtn, replayBtn, homeBtn;
     [SerializeField] private TextMeshProUGUI coinTxt;
     [SerializeField] private GameObject perfectObj;
     int coin;
@@ -14,6 +15,13 @@ public class PopupWin : PopupUI
         base.Initialize(manager);
         nextLvBtn.onClick.AddListener(OnNextLevel);
         replayBtn.onClick.AddListener(OnReplay);
+        homeBtn.onClick.AddListener(() =>
+        {
+            AudioManager.Instance.PlayOneShot(SFXStr.CLICK, 2);
+            LevelManager.Coin += coin;
+            GameManager.NEW_LEVEL = false;
+            SceneManager.LoadScene(0);
+        });
         SetAllBtnInteract(true);
     }
     private void OnReplay()

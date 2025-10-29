@@ -299,13 +299,19 @@ public class AudioManager : Singleton<AudioManager>
     {
         VibraSetting = status ? 1 : 0;
     }
+    public float GetSFXLength(string clipName)
+    {
+        AudioClip clip = soundContainer.GetClip(clipName);
+        if (clip == null) return 0;
+        return clip.length;
+    }
 
 }
 public static class SFXStr
 {
     public static string CLICK = "click";
-    public static string COLLECT = "collect";
-    public static string DROP = "drop";
+    public static string CLACK = "clack";
+    public static string STEP = "step";
     public static string HOLD = "hold";
     public static string LOSE = "lose";
     public static string LOSE_VOICE = "aww_dissappointment";
