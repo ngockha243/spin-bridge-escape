@@ -2,7 +2,9 @@
 using FastFood;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : Singleton<PlayerController>
 {
@@ -41,6 +43,7 @@ public class PlayerController : Singleton<PlayerController>
         animator.Play($"idle{UnityEngine.Random.Range(1, 4)}");
         shadow.DOFade(0.2f, 0.2f);
         transform.rotation = Quaternion.Euler(Vector3.zero);
+        if (GameManager.NEW_LEVEL) return;
         SetRotate(Vector3.up * 180f);
     }
     public void SetRotate(Vector3 value, float duration = 0.5f, Action onComplete = null)
@@ -52,6 +55,7 @@ public class PlayerController : Singleton<PlayerController>
         if (isMoving || isFalling) return;
         if (Input.GetMouseButtonDown(0))
         {
+            if (UIManager.Instance.GetScreen<InGameUI>().AllButtons.Contains(EventSystem.current.currentSelectedGameObject)) return; // lmao
             TryCrossBridge();
         }
     }

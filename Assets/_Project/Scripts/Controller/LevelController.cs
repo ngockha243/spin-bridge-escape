@@ -34,7 +34,6 @@ public class LevelController : Singleton<LevelController>
     }
     public void UpdateLogic()
     {
-        if(GameManager.currentState != GameState.PLAY) return;
         foreach (var platform in platforms)
         {
             platform.UpdateLogic();

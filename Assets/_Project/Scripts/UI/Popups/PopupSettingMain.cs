@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PopupSettingMain : PopupUI
@@ -20,8 +21,9 @@ public class PopupSettingMain : PopupUI
             });
         }
     }
+
     [SerializeField] private ButtonProperty musicBtn, soundBtn, vibrationBtn;
-    [SerializeField] private Button closeBtn;
+    [SerializeField] private Button closeBtn, homeBtn;
     private bool isMusicOff, isSoundOff, isVibrationOff;
     public override void Initialize(UIManager manager)
     {
@@ -37,6 +39,11 @@ public class PopupSettingMain : PopupUI
                 GameManager.Instance.SwitchGameState(GameState.PLAY);
             }
             Hide();
+        });
+        homeBtn.onClick.AddListener(() =>
+        {
+            GameManager.NEW_LEVEL = false;
+            SceneManager.LoadScene(0);
         });
     }
     public override void Show(Action onClose)

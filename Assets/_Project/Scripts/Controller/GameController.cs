@@ -24,15 +24,9 @@ public class GameController : Singleton<GameController>
     }
     public void UpdateLogic()
     {
-        if (GameManager.currentState != GameState.PLAY) return;
         levelCtrl.UpdateLogic();
         playerCtrl.UpdateLogic();
     }
-    public void OnWinGame()
-    {
-
-    }
-
     public void SetStartGround(GroundController ground)
     {
         startGround = ground;

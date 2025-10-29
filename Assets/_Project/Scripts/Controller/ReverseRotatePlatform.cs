@@ -21,7 +21,6 @@ public class ReverseRotatePlatform : BasePlatform
             speedRotate = -speedRotate;
             currentTime = GetRandomValue(1f, 5f);
         }
-        Debug.Log(currentTime);
         currentRotateValue += speedRotate * Time.deltaTime;
         model.transform.rotation = Quaternion.Euler(new Vector3(0f, currentRotateValue, 0f));
         var y = model.transform.rotation.eulerAngles.y;

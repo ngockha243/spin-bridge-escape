@@ -8,14 +8,14 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] UIManager uiManager;
     [SerializeField] LevelManager levelManager;
     [SerializeField] GameController gameController;
-
+    public static bool NEW_LEVEL = false;
     public static GameState currentState { get; private set; }
     public static GameMode currentMode { get; private set; }
     protected override void Awake()
     {
         base.Awake();
         Application.targetFrameRate = 60;
-        SwitchGameState(GameState.NONE);
+        SwitchGameState(NEW_LEVEL ? GameState.PLAY : GameState.NONE);
     }
     private void Start()
     {
@@ -26,6 +26,7 @@ public class GameManager : Singleton<GameManager>
     }
     public void ReloadScene()
     {
+        NEW_LEVEL = true;
         SceneManager.LoadScene(0);
     }
     private void Update()
